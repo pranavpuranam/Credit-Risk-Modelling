@@ -7,7 +7,7 @@ In this section of code we'll test the ML models on the test.csv dataset.
 
 # necessary imports
 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -15,6 +15,44 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_curve, auc, precision_recall_curve
 from training import logistic_regression
+
+# necessary definitions
+
+def plot_confusion_matrix(cm, model_name):
+    """
+    Plots confusion matrix with True Neg, False Neg, False Pos, True Pos labels,
+    count values and percentage for each cell.
+    """
+    # Calculate the percentage for each value
+    cm_percentage = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+
+    # Define the labels for the confusion matrix
+    labels = ["TN", "FP", "FN", "TP"]
+
+    # Plotting the confusion matrix using seaborn heatmap
+    plt.figure(figsize=(6, 4))
+    sns.heatmap(cm, annot=False, fmt='d', cmap='Blues', xticklabels=["No Default", "Default"], yticklabels=["No Default", "Default"], cbar=False)
+
+    # Adding the labels and values in each cell
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            label = ""
+            if i == 0 and j == 0:
+                label = f"TN\n{cm[i, j]}\n({cm_percentage[i, j]:.2f}%)"
+            elif i == 0 and j == 1:
+                label = f"FP\n{cm[i, j]}\n({cm_percentage[i, j]:.2f}%)"
+            elif i == 1 and j == 0:
+                label = f"FN\n{cm[i, j]}\n({cm_percentage[i, j]:.2f}%)"
+            elif i == 1 and j == 1:
+                label = f"TP\n{cm[i, j]}\n({cm_percentage[i, j]:.2f}%)"
+            
+            plt.text(j, i, label, ha='center', va='center', color='black', fontsize=10)
+
+    # Plot settings
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title(f'Confusion Matrix - {model_name}')
+    plt.show()
 
 # read in the testing file
 train = pd.read_csv("train.csv")
@@ -31,7 +69,6 @@ y_train = train['loan_status']
 # define a function that can evaluate the performance of a model
 
 def evaluate_model(model_func, X_train, y_train, X_test, y_test, model_name):
-
     """
     Trains and evaluates a model, displaying key metrics and visualizations.
 
@@ -66,12 +103,7 @@ def evaluate_model(model_func, X_train, y_train, X_test, y_test, model_name):
 
     # === Confusion Matrix Heatmap ===
     cm = confusion_matrix(y_test, y_pred)
-    plt.figure(figsize=(6,4))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=["No Default", "Default"], yticklabels=["No Default", "Default"])
-    plt.xlabel('Predicted')
-    plt.ylabel('Actual')
-    plt.title(f'Confusion Matrix - {model_name}')
-    plt.show()
+    plot_confusion_matrix(cm, "Logistic Regression")
 
     """
     # === ROC Curve ===
@@ -115,4 +147,3 @@ def evaluate_model(model_func, X_train, y_train, X_test, y_test, model_name):
 # evaluate the logistic regression model
 
 evaluate_model(logistic_regression, X_train, y_train, X_test, y_test, "Logistic Regression")
-
