@@ -20,8 +20,6 @@ from training import logistic_regression
 train = pd.read_csv("train.csv")
 test = pd.read_csv("test.csv")
 
-# 
-
 # now we define our Xs and ys
 
 X_test = test.drop('loan_status', axis=1)

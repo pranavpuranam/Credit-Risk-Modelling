@@ -14,13 +14,19 @@ bool_cols = nonstandard.select_dtypes(include=['bool']).columns
 for col in bool_cols:
     nonstandard[col] =nonstandard[col].astype(int)
 
-print(nonstandard.head())
+print(nonstandard.info())
 
 # standardise all values
 
+num_cols = ['person_age', 'person_income', 'person_emp_length', 'loan_grade','loan_amnt', 
+            'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length']
+
 scaler = StandardScaler()
 
-standard = scaler.fit_transform(nonstandard)
+nonstandard[num_cols] = scaler.fit_transform(raw[num_cols])
+
+# Save standardized dataset
+nonstandard.to_csv('standard.csv', index=False)
 
 
 
