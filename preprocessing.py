@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 # read in the whole file
 
@@ -23,20 +24,28 @@ raw = pd.read_csv("credit_risk_dataset.csv")
 
 raw = raw.dropna()
 
+# transform the loan_grade column into numerical
+
+label_encoder = LabelEncoder()
+raw['loan_grade'] = label_encoder.fit_transform(raw['loan_grade'])
+
+# transform the cb_person_default_on_file column into numerical
+raw['cb_person_default_on_file'] = raw['cb_person_default_on_file'].map({'Y': True, 'N': False})
+
+# transform the person_home_ownership column into numerical
+
+raw = pd.get_dummies(raw, columns=['person_home_ownership'], prefix='Ownership Status: ')
+
+# transform the loan_intent into numerical
+
+raw = pd.get_dummies(raw, columns = ['loan_intent'], prefix = "Intent of Loan: ")
+
 # find out more about the characteristics of the dataset
 
 print(raw.head())
 
 print(raw.info())
 
-# split data into training and testing sets (80% for training and 20% for testing)
-
-train_df, test_df = train_test_split(raw, test_size=0.2, random_state=42)
-
-# save all to csv file format
-
-# train_df.to_csv('train.csv', index=False)
-# test_df.to_csv('test.csv', index=False)
-
+# raw.to_csv('num-data.csv', index = False)
 
 

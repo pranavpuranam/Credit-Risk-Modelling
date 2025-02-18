@@ -17,7 +17,5 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 # define the logistic regression model
 
 def logistic_regression(X,y):
-    model = 1
-    return model
-
-# define the abc model
+    
+    # define the logistic regression model
